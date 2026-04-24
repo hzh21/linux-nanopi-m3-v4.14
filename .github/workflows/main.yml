@@ -1,0 +1,44 @@
+- name: Configure and Build
+        run: |
+          export ARCH=arm64
+          export CROSS_COMPILE=aarch64-linux-gnu-
+          export CC=aarch64-linux-gnu-gcc-10
+          
+          touch .scmversion
+          export LOCALVERSION=""
+          
+          # 注意：请确保你的 4.14 仓库里的 defconfig 文件名正确
+          make king6818_defconfig 
+          
+          # 1. 基础设置
+          ./scripts/config --set-str CONFIG_LOCALVERSION "-s5p6818"
+          ./scripts/config --disable CONFIG_LOCALVERSION_AUTO
+          
+          # 2. 网络优化：开启 FQ + BBR (4.14 黄金组合)
+          ./scripts/config --enable CONFIG_NET_SCH_FQ
+          ./scripts/config --enable CONFIG_NET_SCH_FQ_CODEL
+          ./scripts/config --enable CONFIG_TCP_CONG_BBR
+          ./scripts/config --set-val CONFIG_DEFAULT_TCP_CONG "bbr"
+          
+          # 3. 系统响应优化
+          ./scripts/config --set-val CONFIG_HZ 1000
+          ./scripts/config --enable CONFIG_HZ_1000
+          ./scripts/config --enable CONFIG_HIGH_RES_TIMERS
+          
+          # 4. 内存优化 (4.14 对 ZRAM 支持更成熟)
+          ./scripts/config --enable CONFIG_ZRAM
+          ./scripts/config --enable CONFIG_ZRAM_LZ4_COMPRESS
+          ./scripts/config --enable CONFIG_ZSMALLOC
+          
+          make olddefconfig
+          
+          # 5. 正式编译 
+          # 增加 -fcommon 解决 GCC 10 链接冲突
+          # 增加 -Wno-implicit-fallthrough 屏蔽 4.14 常见的 switch case 警告
+          make -j$(nproc) ARCH=$ARCH CROSS_COMPILE=$CROSS_COMPILE CC=$CC \
+               KCFLAGS="-O3 -march=armv8-a+crc -mtune=cortex-a53 \
+                        -fcommon \
+                        -Wno-array-bounds \
+                        -Wno-format-overflow \
+                        -Wno-implicit-fallthrough" \
+               Image dtbs
