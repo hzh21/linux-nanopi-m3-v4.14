@@ -53,6 +53,62 @@ jobs:
           ./scripts/config --enable CONFIG_ZRAM
           ./scripts/config --enable CONFIG_ZRAM_LZ4_COMPRESS
           ./scripts/config --enable CONFIG_ZSMALLOC
+
+          # 1. 强制将 TUN 改为内置 (y)
+          ./scripts/config --set-val CONFIG_TUN y
+          
+          # 2. 开启策略路由与 TPROXY (Mihomo 核心)
+          ./scripts/config --enable CONFIG_IP_ADVANCED_ROUTER
+          ./scripts/config --enable CONFIG_IP_MULTIPLE_TABLES
+          ./scripts/config --enable CONFIG_IP_ROUTE_FWMARK
+          ./scripts/config --enable CONFIG_NETFILTER_XT_TARGET_TPROXY
+          ./scripts/config --enable CONFIG_NETFILTER_XT_MATCH_MARK
+          ./scripts/config --enable CONFIG_NETFILTER_XT_MATCH_SOCKET
+          
+          # 3. 开启 IPSET (提升 Clash/Mihomo 性能)
+          ./scripts/config --enable CONFIG_IP_SET
+          ./scripts/config --enable CONFIG_IP_SET_HASH_IP
+          ./scripts/config --enable CONFIG_IP_SET_HASH_NET
+          
+          # 4. 开启内核原生加速支持
+          ./scripts/config --enable CONFIG_INET_UDP_DIAG   # 方便调试网络连接
+          # 在脚本的配置环节加入
+          ./scripts/config --enable CONFIG_OVERLAY_FS
+          ./scripts/config --enable CONFIG_MEMCG
+          ./scripts/config --enable CONFIG_BLK_DEV_THROTTLING
+          ./scripts/config --enable CONFIG_NETFILTER_XT_MATCH_IPVS
+          # 【核心优化：网络吞吐与多核分流】
+          ./scripts/config --enable CONFIG_RPS
+          ./scripts/config --enable CONFIG_RFS
+          ./scripts/config --enable CONFIG_XPS
+          ./scripts/config --set-val CONFIG_NET_RX_BUSY_POLL y
+          
+          # 【核心优化：连接跟踪与防丢包】
+          ./scripts/config --enable CONFIG_NF_CONNTRACK_EVENTS
+          ./scripts/config --enable CONFIG_NF_CONNTRACK_TIMESTAMP
+          # 增大默认连接表（如果源码支持修改默认值，否则需在启动后用 sysctl 修改）
+          
+          # 【核心优化：网络流量公平性】
+          ./scripts/config --enable CONFIG_NET_SCH_FQ_CODEL
+          ./scripts/config --enable CONFIG_NET_SCH_FQ
+          
+          # 【极致精简：删除调试开销（提升 CPU 效率）】
+          ./scripts/config --disable CONFIG_PROVE_LOCKING
+          ./scripts/config --disable CONFIG_LOCKDEP
+          ./scripts/config --disable CONFIG_DEBUG_PREEMPT
+          ./scripts/config --disable CONFIG_STACKTRACE
+          ./scripts/config --disable CONFIG_FTRACE
+          ./scripts/config --disable CONFIG_DEBUG_INFO
+          
+          # 【性能模式：提升响应速度】
+          ./scripts/config --set-val CONFIG_HZ 1000
+          ./scripts/config --enable CONFIG_HZ_1000
+          ./scripts/config --disable CONFIG_HZ_100
+          ./scripts/config --enable CONFIG_PREEMPT
+          ./scripts/config --disable CONFIG_PREEMPT_VOLUNTARY
+          
+          # 对于 4.14 跑 Docker，通常还需要开启这个（MEMCG 的子项）
+          ./scripts/config --enable CONFIG_MEMCG_SWAP
           
           make olddefconfig
           
