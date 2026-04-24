@@ -181,125 +181,56 @@
 			post-power-on-delay-ms = <50>;
 		};
 
-		i2c3_gpio:i2c@0 {
-			compatible = "i2c-gpio";
-			gpios = <&gpio_e 31 0	/* sda */
-				&gpio_e 30 0	/* scl */
-				>;
-			i2c-gpio,delay-us = <10>;/* ~100 kHz */
-			i2c-gpio,ch =<3>;
-		};
-
-		i2c3_gpio:i2c@0 {
-			#address-cells = <1>;
-			#size-cells = <0>;
-
-			axp228@34 {
-				compatible = "x-powers,axp228";
-				reg = <0x34>;
-				interrupt-parent = <&alive_0>;	// CFG_GPIO_PMIC_INTR
-				interrupts = <0x4 IRQ_TYPE_EDGE_FALLING>;
-				nx,id = <0>;
-				/* vdd_arm-supply = <&VCC1P1_ARM_PMIC>; */
-				/* vdd_core-supply = <&VCC1P0_CORE_PMIC>; */
-				regulators {
-					VCC_LDO1:
-						axp22_rtcldo{PMIC_PDATA_INIT( 0,
-						"axp228_rtcldo",
-						3000000, 3000000, 0, 0, 3300000,
-						0, 0xF) };
-					VCC_LDO2:
-						axp22_aldo1{PMIC_PDATA_INIT( 1,
-						"axp228_3p3_alive",
-						700000, 3300000, 1, 1, 3300000,
-						1, 0xF) };
-					VCC_LDO3:
-						axp22_aldo2{PMIC_PDATA_INIT( 2,
-						"axp228_1p8_alive",
-						700000, 3300000, 1, 1, 1800000,
-						1, 0xF) };
-					VCC_LDO4:
-						axp22_aldo3{PMIC_PDATA_INIT( 3,
-						"axp228_1p0_alive",
-						700000, 3300000, 1, 1, 1000000,
-						1, 0xF) };
-					VCC_LDO5:
-						axp22_dldo1{PMIC_PDATA_INIT( 4,
-						"axp228_wide",
-						700000, 3300000, 1, 1, 3300000,
-						1, 0xF) };
-					VCC_LDO6:
-						axp22_dldo2{PMIC_PDATA_INIT( 5,
-						"axp228_1p8_cam",
-						700000, 3300000, 0, 0, 1800000,
-						0, 0xF) };
-					VCC_LDO7:
-						axp22_dldo3{PMIC_PDATA_INIT( 6,
-						"axp228_dldo3",
-						700000, 3300000, 0, 0,  700000,
-						0, 0xF) };
-					VCC_LDO8:
-						axp22_dldo4{PMIC_PDATA_INIT( 7,
-						"axp228_dldo4",
-						700000, 3300000, 0, 0,  700000,
-						0, 0xF) };
-					VCC_LDO9:
-						axp22_eldo1{PMIC_PDATA_INIT( 8,
-						"axp228_1p8_sys",
-						700000, 3300000, 1, 1, 1800000,
-						1, 0xF) };
-					VCC_LDO10:
-						axp22_eldo2{PMIC_PDATA_INIT( 9,
-						"axp228_3p3_wifi",
-						700000, 3300000, 1, 1, 3300000,
-						1, 0xF) };
-					VCC_LDO11:
-						axp22_eldo3{PMIC_PDATA_INIT(10,
-						"axp228_eldo3",
-						700000, 3300000, 0, 0,  700000,
-						0, 0xF) };
-					VCC_LDO12:
-						axp22_dc5ldo{PMIC_PDATA_INIT(11,
-						"axp228_1p2_cvbs",
-						700000, 1400000, 0, 0, 1200000,
-						0, 0xF) };
-					VCC_DCDC1:
-						axp22_dcdc1{PMIC_PDATA_INIT(12,
-						"axp228_3p3_sys",
-						1600000, 3400000, 1, 1, 3300000,
-						1, 0xF) };
-					VCC1P1_ARM_PMIC:
-						axp22_dcdc2{PMIC_PDATA_INIT(13,
-						"axp228_1p1_arm",
-						600000, 1540000, 1, 1, 1200000,
-						1, 0xF) };
-					VCC1P0_CORE_PMIC:
-						axp22_dcdc3{PMIC_PDATA_INIT(14,
-						"axp228_1p0_core",
-						600000, 1860000, 1, 1, 1200000,
-						1, 0xF) };
-					VCC_DCDC4:
-						axp22_dcdc4{PMIC_PDATA_INIT(15,
-						"axp228_1p5_sys",
-						600000, 1540000, 1, 1, 1500000,
-						1, 0xF) };
-					VCC_DCDC5:
-						axp22_dcdc5{PMIC_PDATA_INIT(16,
-						"axp228_1p5_ddr",
-						1000000, 2550000, 1, 1, 1500000,
-						1, 0xF) };
-					VCC_LDOIO0:
-						axp22_ldoio0{PMIC_PDATA_INIT(17,
-						"axp228_ldoio0",
-						700000, 3300000, 0, 0, 1800000,
-						0, 0xF) };
-					VCC_LDOIO1:
-						axp22_ldoio1{PMIC_PDATA_INIT(18,
-						"axp228_ldoio1",
-						700000, 3300000, 0, 0, 1000000,
-						0, 0xF) };
-				};
-			};
+		/* 1. 修改节点名称和 I2C 通道编号（建议与荣品原厂保持一致设为 @3） */
+		i2c3_gpio: i2c@3 {
+		    compatible = "i2c-gpio";
+		    
+		    /* 2. 修改为荣品的引脚：GPIOC 16 (SDA), GPIOC 15 (SCL) */
+		    /* 注意：4.14 内核建议加上 GPIO_OPEN_DRAIN 标志以符合 I2C 规范 */
+		    gpios = <&gpio_c 16 (GPIO_ACTIVE_HIGH | GPIO_OPEN_DRAIN)    /* sda */
+		             &gpio_c 15 (GPIO_ACTIVE_HIGH | GPIO_OPEN_DRAIN)    /* scl */
+		            >;
+		
+		    i2c-gpio,delay-us = <10>;   /* 运行频率约 100 kHz */
+		    #address-cells = <1>;
+		    #size-cells = <0>;
+		    status = "okay";
+		
+		    /* 3. AXP228 保持在 0x34 地址 */
+		    axp228@34 {
+		        compatible = "x-powers,axp228";
+		        reg = <0x34>;
+		        
+		        /* 中断引脚，保持与 M3 模板一致（通常 S5P6818 都是 ALIVE 0 的第 4 号中断） */
+		        interrupt-parent = <&alive_0>;
+		        interrupts = <0x4 IRQ_TYPE_EDGE_FALLING>;
+		        
+		        nx,id = <0>;
+		
+		        regulators {
+		            /* 这里直接引用 4.14 模板中的 PMIC_PDATA_INIT 列表 */
+		            /* 注意：不需要修改里面的电压值，除非你确定荣品板子的核心电压有特殊要求 */
+		            VCC_LDO1: axp22_rtcldo { PMIC_PDATA_INIT(0, "axp228_rtcldo", 3000000, 3000000, 0, 0, 3300000, 0, 0xF) };
+		            VCC_LDO2: axp22_aldo1  { PMIC_PDATA_INIT(1, "axp228_3p3_alive", 700000, 3300000, 1, 1, 3300000, 1, 0xF) };
+		            VCC_LDO3: axp22_aldo2  { PMIC_PDATA_INIT(2, "axp228_1p8_alive", 700000, 3300000, 1, 1, 1800000, 1, 0xF) };
+		            VCC_LDO4: axp22_aldo3  { PMIC_PDATA_INIT(3, "axp228_1p0_alive", 700000, 3300000, 1, 1, 1000000, 1, 0xF) };
+		            VCC_LDO5: axp22_dldo1  { PMIC_PDATA_INIT(4, "axp228_wide", 700000, 3300000, 1, 1, 3300000, 1, 0xF) };
+		            VCC_LDO6: axp22_dldo2  { PMIC_PDATA_INIT(5, "axp228_1p8_cam", 700000, 3300000, 0, 0, 1800000, 0, 0xF) };
+		            VCC_LDO7: axp22_dldo3  { PMIC_PDATA_INIT(6, "axp228_dldo3", 700000, 3300000, 0, 0, 700000, 0, 0xF) };
+		            VCC_LDO8: axp22_dldo4  { PMIC_PDATA_INIT(7, "axp228_dldo4", 700000, 3300000, 0, 0, 700000, 0, 0xF) };
+		            VCC_LDO9: axp22_eldo1  { PMIC_PDATA_INIT(8, "axp228_1p8_sys", 700000, 3300000, 1, 1, 1800000, 1, 0xF) };
+		            VCC_LDO10: axp22_eldo2 { PMIC_PDATA_INIT(9, "axp228_3p3_wifi", 700000, 3300000, 1, 1, 3300000, 1, 0xF) };
+		            VCC_LDO11: axp22_eldo3 { PMIC_PDATA_INIT(10, "axp228_eldo3", 700000, 3300000, 0, 0, 700000, 0, 0xF) };
+		            VCC_LDO12: axp22_dc5ldo { PMIC_PDATA_INIT(11, "axp228_1p2_cvbs", 700000, 1400000, 0, 0, 1200000, 0, 0xF) };
+		            VCC_DCDC1: axp22_dcdc1 { PMIC_PDATA_INIT(12, "axp228_3p3_sys", 1600000, 3400000, 1, 1, 3300000, 1, 0xF) };
+		            VCC1P1_ARM_PMIC: axp22_dcdc2 { PMIC_PDATA_INIT(13, "axp228_1p1_arm", 600000, 1540000, 1, 1, 1200000, 1, 0xF) };
+		            VCC1P0_CORE_PMIC: axp22_dcdc3 { PMIC_PDATA_INIT(14, "axp228_1p0_core", 600000, 1860000, 1, 1, 1200000, 1, 0xF) };
+		            VCC_DCDC4: axp22_dcdc4 { PMIC_PDATA_INIT(15, "axp228_1p5_sys", 600000, 1540000, 1, 1, 1500000, 1, 0xF) };
+		            VCC_DCDC5: axp22_dcdc5 { PMIC_PDATA_INIT(16, "axp228_1p5_ddr", 1000000, 2550000, 1, 1, 1500000, 1, 0xF) };
+		            VCC_LDOIO0: axp22_ldoio0 { PMIC_PDATA_INIT(17, "axp228_ldoio0", 700000, 3300000, 0, 0, 1800000, 0, 0xF) };
+		            VCC_LDOIO1: axp22_ldoio1 { PMIC_PDATA_INIT(18, "axp228_ldoio1", 700000, 3300000, 0, 0, 1000000, 0, 0xF) };
+		        };
+		    };
 		};
 
 		pinctrl@C0010000 {
@@ -351,8 +282,8 @@
 				#address-cells = <1>;
 				#size-cells = <0>;
 
-				ethernet_phy: ethernet-phy@3 {
-					reg = <3>;
+				ethernet_phy: ethernet-phy@4 {
+					reg = <4>;
 					fixed-link {
 						speed = <1000>;
 						full-duplex;
