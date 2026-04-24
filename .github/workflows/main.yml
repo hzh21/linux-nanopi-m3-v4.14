@@ -58,7 +58,7 @@ jobs:
           
           # 4. 正式编译 (加入 -fcommon 解决 GCC 10 兼容性问题)
           make -j$(nproc) ARCH=$ARCH CROSS_COMPILE=$CROSS_COMPILE CC=$CC \
-               KCFLAGS="-O3 -march=armv8-a+crc -mtune=cortex-a53 -fcommon -Wno-array-bounds -Wno-format-overflow -Wno-implicit-fallthrough" \
+               KCFLAGS="-O3 -march=armv8-a+crc -mtune=cortex-a53 -fcommon -Wno-array-bounds -Wno-format-overflow" \
                Image dtbs
 
       - name: Upload Artifacts
@@ -67,4 +67,4 @@ jobs:
           name: Optimized-King6818-Kernel
           path: |
             arch/arm64/boot/Image
-            arch/arm64/boot/dts/nexell/s5p6818-king6818.dtb
+            arch/arm64/boot/dts/nexell/king6818.dtb
