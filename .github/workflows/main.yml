@@ -1,44 +1,68 @@
-- name: Configure and Build
+name: Build Optimized King6818 Kernel
+
+on:
+  push:
+    branches: [ master ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - name: Install GCC 10 Toolchain
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            gcc-10-aarch64-linux-gnu \
+            g++-10-aarch64-linux-gnu \
+            device-tree-compiler \
+            bc libssl-dev make \
+            bison flex libelf-dev \
+            pkg-config curl python3
+
+      - name: Configure and Build
         run: |
           export ARCH=arm64
           export CROSS_COMPILE=aarch64-linux-gnu-
           export CC=aarch64-linux-gnu-gcc-10
           
+          # 1. 彻底禁用内核自动生成 Git 版本后缀
           touch .scmversion
           export LOCALVERSION=""
           
-          # 注意：请确保你的 4.14 仓库里的 defconfig 文件名正确
-          make king6818_defconfig 
+          # 2. 基础配置 (确认你的 defconfig 文件名正确)
+          make king6818_defconfig
           
-          # 1. 基础设置
+          # 3. 深度网络与内核性能调优
           ./scripts/config --set-str CONFIG_LOCALVERSION "-s5p6818"
           ./scripts/config --disable CONFIG_LOCALVERSION_AUTO
-          
-          # 2. 网络优化：开启 FQ + BBR (4.14 黄金组合)
           ./scripts/config --enable CONFIG_NET_SCH_FQ
           ./scripts/config --enable CONFIG_NET_SCH_FQ_CODEL
           ./scripts/config --enable CONFIG_TCP_CONG_BBR
           ./scripts/config --set-val CONFIG_DEFAULT_TCP_CONG "bbr"
-          
-          # 3. 系统响应优化
           ./scripts/config --set-val CONFIG_HZ 1000
           ./scripts/config --enable CONFIG_HZ_1000
           ./scripts/config --enable CONFIG_HIGH_RES_TIMERS
-          
-          # 4. 内存优化 (4.14 对 ZRAM 支持更成熟)
           ./scripts/config --enable CONFIG_ZRAM
           ./scripts/config --enable CONFIG_ZRAM_LZ4_COMPRESS
           ./scripts/config --enable CONFIG_ZSMALLOC
           
           make olddefconfig
           
-          # 5. 正式编译 
-          # 增加 -fcommon 解决 GCC 10 链接冲突
-          # 增加 -Wno-implicit-fallthrough 屏蔽 4.14 常见的 switch case 警告
+          # 4. 正式编译 (加入 -fcommon 解决 GCC 10 兼容性问题)
           make -j$(nproc) ARCH=$ARCH CROSS_COMPILE=$CROSS_COMPILE CC=$CC \
-               KCFLAGS="-O3 -march=armv8-a+crc -mtune=cortex-a53 \
-                        -fcommon \
-                        -Wno-array-bounds \
-                        -Wno-format-overflow \
-                        -Wno-implicit-fallthrough" \
+               KCFLAGS="-O3 -march=armv8-a+crc -mtune=cortex-a53 -fcommon -Wno-array-bounds -Wno-format-overflow -Wno-implicit-fallthrough" \
                Image dtbs
+
+      - name: Upload Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: Optimized-King6818-Kernel
+          path: |
+            arch/arm64/boot/Image
+            arch/arm64/boot/dts/nexell/s5p6818-king6818.dtb
