@@ -30,7 +30,9 @@ jobs:
           export ARCH=arm64
           export CROSS_COMPILE=aarch64-linux-gnu-
           export CC=aarch64-linux-gnu-gcc-10
-          
+          # --- 核心修复：修复 GCC 10 下 dtc 的 yylloc 重复定义问题 ---
+          sed -i 's/^YYLTYPE yylloc;/extern YYLTYPE yylloc;/' scripts/dtc/dtc-lexer.lex.c_shipped
+          # -----------------------------------------------------
           # 1. 彻底禁用内核自动生成 Git 版本后缀
           touch .scmversion
           export LOCALVERSION=""
