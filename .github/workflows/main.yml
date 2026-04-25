@@ -115,12 +115,28 @@ jobs:
           # 4. 正式编译 (加入 -fcommon 解决 GCC 10 兼容性问题)
           make -j$(nproc) ARCH=$ARCH CROSS_COMPILE=$CROSS_COMPILE CC=$CC \
                KCFLAGS="-O3 -march=armv8-a+crc -mtune=cortex-a53 -fcommon -Wno-array-bounds -Wno-format-overflow" \
-               Image dtbs
+               Image dtbs modules
+          # 创建一个临时安装目录
+          mkdir -p ./output/modules
+          make ARCH=$ARCH CROSS_COMPILE=$CROSS_COMPILE CC=$CC \
+               INSTALL_MOD_PATH=./output/modules modules_install
+          
+          # 移除编译符号链接（减小体积，防止部署报错）
+          rm -f ./output/modules/lib/modules/*/build
+          rm -f ./output/modules/lib/modules/*/source
+          
+          # 打包模块文件
+          cd output/modules && tar -czf ../modules.tar.gz . && cd ../..
+          
+          # 整理最终产物
+          cp arch/arm64/boot/Image ./output/
+          cp arch/arm64/boot/dts/nexell/king6818.dtb ./output/
 
       - name: Upload Artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: Optimized-King6818-Kernel
+          name: Optimized-King6818-Kernel-Full
           path: |
-            arch/arm64/boot/Image
-            arch/arm64/boot/dts/nexell/king6818.dtb
+            output/Image
+            output/king6818.dtb
+            output/modules.tar.gz
