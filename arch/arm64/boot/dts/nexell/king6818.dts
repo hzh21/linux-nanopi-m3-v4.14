@@ -248,7 +248,7 @@
 			};
 		};
 
-		&dwc2_otg {
+		dwc2_otg {
 		    vusb_d-supply = <&reg_vusb_d>;
 		    vusb_a-supply = <&reg_vusb_a>;
 		    /* 保留你的 GPIO 物理开关 */
