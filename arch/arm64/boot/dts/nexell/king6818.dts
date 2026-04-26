@@ -132,6 +132,30 @@
 			status = "okay";
 		};
 
+		dw_mmc_1:dw_mmc@c0068000 {
+			bus-width = <4>;
+			cap-sd-highspeed;
+			clock-frequency = <100000000>;
+			card-detect-delay = <200>;
+			non-removable;
+            keep-power-in-suspend;
+			nexell,drive_dly = <0x0>;
+			nexell,drive_shift = <0x02>;
+			nexell,sample_dly = <0x00>;
+			nexell,sample_shift = <0x01>;
+			mmc-pwrseq = <&wifi_powerseq>;
+			status = "disabled";
+
+			/* wifi definition for brcmfmac.ko module */
+            brcmf: bcrmf@1 {
+                compatible = "brcm,bcm4329-fmac";
+                reg = <1>;
+				interrupt-parent = <&gpio_c>;
+				interrupts = <17 IRQ_TYPE_LEVEL_HIGH>;
+				brcm,powersave-default-off;
+            };
+		};
+
 		dw_mmc_2:dw_mmc@c0069000 {
 			bus-width = <4>;				// MMC_CAP_4_BIT_DATA
 			cap-sd-highspeed;				// DW_MCI_QUIRK_HIGHSPEED
@@ -204,15 +228,12 @@
 		};
 
 		pinctrl@C0010000 {
-		    /* touchpanel_irq 已被 onewire-touch 使用，现已禁用，故删除 */
-		    /* 
 		    touchpanel_irq: touchpanel-irq {
 		        nexell,pins = "gpioc-16";
 		        nexell,pin-function = <1>;
 		        nexell,pin-pull = <2>;
 		        nexell,pin-strength = <0>;
 		    };
-		    */
 		};
 
 		nexell_usbphy: nexell-usbphy@c0012000 {
