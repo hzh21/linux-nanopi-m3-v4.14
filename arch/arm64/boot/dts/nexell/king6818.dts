@@ -204,12 +204,15 @@
 		};
 
 		pinctrl@C0010000 {
-			touchpanel_irq: touchpanel-irq {
-				nexell,pins = "gpioc-16";
-				nexell,pin-function = <1>;
-				nexell,pin-pull = <2>;
-				nexell,pin-strength = <0>;
-			};
+		    /* touchpanel_irq 已被 onewire-touch 使用，现已禁用，故删除 */
+		    /* 
+		    touchpanel_irq: touchpanel-irq {
+		        nexell,pins = "gpioc-16";
+		        nexell,pin-function = <1>;
+		        nexell,pin-pull = <2>;
+		        nexell,pin-strength = <0>;
+		    };
+		    */
 		};
 
 		nexell_usbphy: nexell-usbphy@c0012000 {
@@ -272,6 +275,7 @@
 				#sound-dai-cells = <0>;
 				compatible = "everest,es8316";
 				reg = <0x11>;
+				status = "disabled";
 			};
 		};
 
@@ -315,11 +319,11 @@
 		};
 
 		vip_1:vip@c0064000 {
-			status = "okay";
+			status = "disabled";
 		};
 
 		clipper_1:clipper1@c0064000 {
-			status = "okay";
+			status = "disabled";
 			pwms = <&pwm 1 41 0>; /* 1000000000/41 */
 			interface_type = <NX_CAPTURE_INTERFACE_PARALLEL>;
 			pinctrl-names = "default";
@@ -357,7 +361,7 @@
 		};
 
 		dp_drm: display_drm {
-            status = "okay";
+            status = "disabled";
             ports {
                 port@0 {
                     reg = <0>;
@@ -393,12 +397,12 @@
         dp_drm_hdmi: display_drm_hdmi {
             ddc-i2c-bus = <&i2c_1>;
             q_range = <1>;
-            status = "ok";
+            status = "disabled";
         };
 
         dp_drm_rgb: display_drm_rgb {
             remote-endpoint = <&rgb_panel>;
-            status = "okay";
+            status = "disabled";
 
             dp_control {
                 clk_src_lv0 = <0>;
@@ -422,7 +426,7 @@
         };
 
         dp_drm_lvds: display_drm_lvds {
-			status = "ok";
+			status = "disabled";
 			remote-endpoint = <&lvds_panel>;
 			dp_control {
 				clk_src_lv0 = <0>;
@@ -445,12 +449,12 @@
 			#sound-dai-cells = <1>;
 			sample-rate = <48000>;
 			frame-bit = <32>;
-			status = "okay";
+			status = "i2s_0";
 		};
 
 		spdif_tx: spdiftx@c0059000 {
 			#sound-dai-cells = <1>;
-			status = "okay";
+			status = "disabled";
 		};
 
 		adc:adc@c0053000 {
@@ -458,26 +462,26 @@
 		};
 
 		video-codec@c0080000 {
-			status = "okay";
+			status = "disabled";
 			sram = <0 0>;
 		};
 
 		scaler@c0066000 {
-			status = "okay";
+			status = "disabled";
 		};
 
 		nano-videodev {
 			compatible = "nexell,nano-videodev";
 			reg = <0xc0102000 0x100>;
 			reg-names = "mlc.0";
-			status = "okay";
+			status = "disabled";
 		};
 	};	/*** soc ***/
 
 	panel_lvds {
 		compatible = "nanopi,nano-panel";
 		lvds;
-		status = "okay";
+		status = "disabled";
 
 		port {
 			lvds_panel: endpoint {
@@ -487,7 +491,7 @@
 
 	panel_rgb {
 		compatible = "nanopi,nano-panel";
-		status = "okay";
+		status = "disabled";
 
 		pinctrl-names = "default";
 		pinctrl-0 = <&dp_rgb_vclk &dp_rgb_vsync &dp_rgb_hsync
@@ -563,7 +567,7 @@
 			"Headphone", "TV Out";
 		simple-audio-card,routing =
 			"TV Out", "spdif-out";
-		status = "okay";
+		status = "disabled";
 
 		simple-audio-card,dai-link@0 {
 		    cpu {
@@ -633,6 +637,7 @@
 		reg = <PHYS_BASE_TIMER 0x1000>;
 		interrupts = <0 IRQ_TIMER3 0>;
 		irq-timer = <3>;
+		status = "disabled";
 	};
 
 	onewire-touch {
@@ -642,5 +647,6 @@
 		i2c-bus = <&i2c_2>;
 		pinctrl-names = "default";
 		pinctrl-0 = <&touchpanel_irq>;
+		status = "disabled";
 	};
 };
