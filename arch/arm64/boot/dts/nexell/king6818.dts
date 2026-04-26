@@ -253,7 +253,6 @@
 		    vusb_a-supply = <&reg_vusb_a>;
 		    /* 保留你的 GPIO 物理开关 */
 		    gpios = <&gpio_d 21 0>; 
-		    dr_mode = "host";
 		    status = "okay";
 		};
 
