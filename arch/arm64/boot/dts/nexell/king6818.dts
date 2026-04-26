@@ -239,6 +239,9 @@
 			port@0 {
 				status = "okay";
 			};
+			port@1 {
+				status = "okay";
+			};
 		};
 
 		ohci@c0020000 {
@@ -251,10 +254,6 @@
 		dwc2otg@c0040000 {
 		    vusb_d-supply = <&reg_vusb_d>;
 		    vusb_a-supply = <&reg_vusb_a>;
-			dr_mode = "host";
-    /* 2. 4.14 标准属性：告诉驱动这是一个支持 OTG 但我们强制锁定在 Host 的端口 */
-    		tpl-support;
-		    /* 保留你的 GPIO 物理开关 */
 		    gpios = <&gpio_d 21 0>; 
 		    status = "okay";
 		};
