@@ -248,9 +248,13 @@
 			};
 		};
 
-		dwc2otg@c0040000 {
-			gpios = <&gpio_d 21 0>;
-			status = "okay";
+		&dwc2_otg {
+		    vusb_d-supply = <&reg_vusb_d>;
+		    vusb_a-supply = <&reg_vusb_a>;
+		    /* 保留你的 GPIO 物理开关 */
+		    gpios = <&gpio_d 21 0>; 
+		    dr_mode = "host";
+		    status = "okay";
 		};
 
 		gmac0:ethernet@c0060000 {
