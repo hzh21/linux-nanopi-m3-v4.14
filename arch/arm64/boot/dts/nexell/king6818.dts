@@ -45,6 +45,24 @@
 		reg = <0x40000000 0x40000000>;
 	};
 
+	reg_vusb_d: regulator-vusbd {
+		compatible = "regulator-fixed";
+		regulator-name = "vusb_d";
+		regulator-min-microvolt = <3300000>;
+		regulator-max-microvolt = <3300000>;
+		regulator-always-on;
+		regulator-boot-on;
+	};
+
+	reg_vusb_a: regulator-vusba {
+		compatible = "regulator-fixed";
+		regulator-name = "vusb_a";
+		regulator-min-microvolt = <3300000>;
+		regulator-max-microvolt = <3300000>;
+		regulator-always-on;
+		regulator-boot-on;
+	};
+
 	aliases {
 		ethernet0 = &gmac0;
 		/* 这里的 Label 必须与你下面定义的 dw_mmc_x 严格一致 */
@@ -231,8 +249,8 @@
 		};
 
 		dwc2otg@c0040000 {
-			vusb_d-supply = <&VCC_LDOIO0>;
-			vusb_a-supply = <&VCC_LDOIO0>;
+			vusb_d-supply = <&reg_vusb_d>;
+			vusb_a-supply = <&reg_vusb_a>;
 			status = "okay";
 		};
 
