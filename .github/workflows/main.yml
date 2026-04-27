@@ -106,6 +106,20 @@ jobs:
           ./scripts/config --disable CONFIG_HZ_100
           ./scripts/config --enable CONFIG_PREEMPT
           ./scripts/config --disable CONFIG_PREEMPT_VOLUNTARY
+          ./scripts/config --enable SECCOMP
+          ./scripts/config --enable SECCOMP_FILTER
+          ./scripts/config --enable BPF
+          ./scripts/config --enable BPF_SYSCALL
+          ./scripts/config --enable CGROUP_BPF
+          ./scripts/config --enable FHANDLE
+          ./scripts/config --enable TMPFS_POSIX_ACL
+          ./scripts/config --enable TMPFS_XATTR
+          ./scripts/config --enable AUDIT
+          ./scripts/config --enable POSIX_MQUEUE
+          ./scripts/config --enable CRYPTO_USER_API_HASH
+          ./scripts/config --enable CRYPTO_HMAC
+          ./scripts/config --enable CRYPTO_SHA256
+          ./scripts/config --enable OVERLAY_FS
           
           # 对于 4.14 跑 Docker，通常还需要开启这个（MEMCG 的子项）
           ./scripts/config --enable CONFIG_MEMCG_SWAP
