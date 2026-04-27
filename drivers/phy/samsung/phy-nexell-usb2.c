@@ -14,8 +14,6 @@
 #include <linux/phy/phy.h>
 #include <linux/regmap.h>
 #include "phy-samsung-usb2.h"
-#include <soc/nexell/tieoff.h>
-#include <dt-bindings/tieoff/s5p6818-tieoff.h>
 
 /* Nexell USBHOST PHY registers */
 
@@ -282,30 +280,7 @@ static int nx_host_power_on(struct samsung_usb2_phy_instance *inst)
 	writel(readl((void *)(drv->reg_phy + NX_HOST_CON0)) |
 	       NX_HOST_CON0_AHB_RESET_SYNC,
 	       (void *)(drv->reg_phy + NX_HOST_CON0));
-	/* ========================================================= */
-	/* 植入 4.4 原厂 Tie-off 唤醒逻辑，打通 SoC 底层复位开关 */
-	/* ========================================================= */
-	nx_tieoff_set(NX_TIEOFF_USB20HOST0_ss_ena_incr16_i, 1);
-	nx_tieoff_set(NX_TIEOFF_USB20HOST0_ss_ena_incr8_i, 1);
-	nx_tieoff_set(NX_TIEOFF_USB20HOST0_ss_ena_incr4_i, 1);
-	nx_tieoff_set(NX_TIEOFF_USB20HOST0_ss_ena_incrx_align_i, 1);
-	nx_tieoff_set(NX_TIEOFF_USB20HOST0_ss_word_if_enb_i, 1);
-	nx_tieoff_set(NX_TIEOFF_USB20HOST0_ss_word_if_i, 1);
-	nx_tieoff_set(NX_TIEOFF_USB20HOST0_i_WORDINTERFACE_ENB, 1);
-	nx_tieoff_set(NX_TIEOFF_USB20HOST0_i_WORDINTERFACE, 1);
-	nx_tieoff_set(NX_TIEOFF_USB20HOST0_ohci_susp_lgcy_i, 1);
-
-	nx_tieoff_set(NX_TIEOFF_USB20HOST0_i_POR_ENB, 0);
-	nx_tieoff_set(NX_TIEOFF_USB20HOST0_i_POR, 0);
-	nx_tieoff_set(NX_TIEOFF_USB20HOST0_i_POR_ENB, 1);
-	udelay(10);
-
-	nx_tieoff_set(NX_TIEOFF_USB20HOST0_i_nHostPhyResetSync, 1);
-	nx_tieoff_set(NX_TIEOFF_USB20HOST0_i_nHostUtmiResetSync, 1);
-	nx_tieoff_set(NX_TIEOFF_USB20HOST0_i_nResetSync, 1);
-	nx_tieoff_set(NX_TIEOFF_USB20HOST0_i_nResetSync_ohci, 1);
-	nx_tieoff_set(NX_TIEOFF_USB20HOST0_i_nAuxWellResetSync, 1);
-	/* ========================================================= */
+	
 	return 0;
 }
 
@@ -333,20 +308,6 @@ static int nx_host_power_off(struct samsung_usb2_phy_instance *inst)
 	reg   &= ~(NX_HOST_CON3_POR);
 	writel(reg, (void *)(drv->reg_phy + NX_HOST_CON3));
 
-	udelay(10);
-	nx_tieoff_set(NX_TIEOFF_USB20HOST0_i_nResetSync, 0);
-	nx_tieoff_set(NX_TIEOFF_USB20HOST0_i_nResetSync_ohci, 0);
-	nx_tieoff_set(NX_TIEOFF_USB20HOST0_i_nAuxWellResetSync, 0);
-
-	nx_tieoff_set(NX_TIEOFF_USB20HOST0_i_nHostUtmiResetSync, 0);
-
-	nx_tieoff_set(NX_TIEOFF_USB20HOST0_i_POR_ENB, 0);
-	nx_tieoff_set(NX_TIEOFF_USB20HOST0_i_POR, 0);
-	nx_tieoff_set(NX_TIEOFF_USB20HOST0_i_POR_ENB, 1);
-	udelay(1);
-	nx_tieoff_set(NX_TIEOFF_USB20HOST0_i_POR, 1);
-	udelay(1);
-	nx_tieoff_set(NX_TIEOFF_USB20HOST0_i_POR, 0);
 	return 0;
 }
 
