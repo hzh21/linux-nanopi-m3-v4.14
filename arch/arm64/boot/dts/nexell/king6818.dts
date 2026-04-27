@@ -754,4 +754,11 @@
 	regulator-boot-on;
 };
 
-/* 如果你觉得还有其他关键电源被误杀了，都可以像这样追加 */
+&gpio_b {
+	usb_hub_reset_hog {
+		gpio-hog;
+		gpios = <8 0>; /* 8 代表 GPIOB_8，0 代表默认的高低电平逻辑 */
+		output-high;
+		line-name = "usb-hub-reset";
+	};
+};
