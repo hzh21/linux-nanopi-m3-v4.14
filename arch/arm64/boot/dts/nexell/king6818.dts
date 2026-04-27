@@ -739,3 +739,19 @@
 		status = "disabled";
 	};
 };
+
+/* 给关键电源追加 4.14 标准通行证，防止被核心框架误杀 */
+
+&VCC_LDO10 {
+	/* 保护 WiFi 和 Hub 的 3.3V 动力电不被断开 */
+	regulator-always-on;
+	regulator-boot-on;
+};
+
+&VCC_DCDC1 {
+	/* 保护系统 3.3V 不被断开 */
+	regulator-always-on;
+	regulator-boot-on;
+};
+
+/* 如果你觉得还有其他关键电源被误杀了，都可以像这样追加 */
