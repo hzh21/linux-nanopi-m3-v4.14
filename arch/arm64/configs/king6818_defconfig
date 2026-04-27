@@ -4634,5 +4634,39 @@ CONFIG_FONT_8x16=y
 # CONFIG_SG_SPLIT is not set
 CONFIG_SG_POOL=y
 CONFIG_ARCH_HAS_SG_CHAIN=y
+# ==========================================
+# 现代 Systemd 与 Podman 容器环境必选配置补丁
+# ==========================================
+
+# 1. 命名空间支持 (Namespaces - Podman 核心)
+CONFIG_NAMESPACES=y
+CONFIG_UTS_NS=y
+CONFIG_IPC_NS=y
+CONFIG_USER_NS=y
+CONFIG_PID_NS=y
+CONFIG_NET_NS=y
+
+# 2. 控制组支持 (Cgroups - 解决 Systemd resources 报错)
+CONFIG_CGROUPS=y
+CONFIG_MEMCG=y
+CONFIG_BLK_CGROUP=y
+CONFIG_CGROUP_SCHED=y
+CONFIG_CGROUP_PIDS=y
+CONFIG_CGROUP_DEVICE=y
+CONFIG_CGROUP_CPUACCT=y
+CONFIG_CGROUP_FREEZER=y
+CONFIG_CPUSETS=y
+
+# 3. 安全与系统调用 (Seccomp & Fhandle)
+CONFIG_FHANDLE=y
+CONFIG_SECCOMP=y
+CONFIG_SECCOMP_FILTER=y
+
+# 4. 虚拟文件系统增强 (解决 Not a directory 报错)
+CONFIG_TMPFS_POSIX_ACL=y
+CONFIG_TMPFS_XATTR=y
+
+# 5. 联合文件系统 (Podman 镜像存储核心)
+CONFIG_OVERLAY_FS=y
 CONFIG_SBITMAP=y
 # CONFIG_STRING_SELFTEST is not set
