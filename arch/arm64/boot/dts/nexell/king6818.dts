@@ -63,6 +63,23 @@
 		regulator-boot-on;
 	};
 
+	hub_power: hub-power {
+		compatible = "regulator-fixed";
+		regulator-name = "hub_reset";
+		
+		/* 核心引脚：GPIOB_8 */
+		gpio = <&gpio_b 8 0>; 
+		
+		/* 逻辑设置 */
+		enable-active-high;    /* 高电平为启用状态 */
+		regulator-always-on;   /* 强制保持开启，防止内核为了省电关掉它 */
+		regulator-boot-on;     /* 允许在引导阶段就通电 */
+
+		/* 核心时序：延迟 500ms 拉高 */
+		/* 这模拟了脚本中的 sleep 0.5，给电源留出稳定时间 */
+		startup-delay-us = <500000>; 
+	};
+
 	aliases {
 		ethernet0 = &gmac0;
 		/* 这里的 Label 必须与你下面定义的 dw_mmc_x 严格一致 */
@@ -754,11 +771,3 @@
 	regulator-boot-on;
 };
 
-&gpio_b {
-	usb_hub_reset_hog {
-		gpio-hog;
-		gpios = <8 0>; /* 8 代表 GPIOB_8，0 代表默认的高低电平逻辑 */
-		output-high;
-		line-name = "usb-hub-reset";
-	};
-};
