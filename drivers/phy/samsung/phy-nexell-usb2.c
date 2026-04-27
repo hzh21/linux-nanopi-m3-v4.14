@@ -232,6 +232,7 @@ static int nx_otg_power_off(struct samsung_usb2_phy_instance *inst)
 
 static int nx_host_power_on(struct samsung_usb2_phy_instance *inst)
 {
+	printk(KERN_ERR "====== BINGO! NX HOST PHY IS POWERING ON! ======\n");
 	struct samsung_usb2_phy_driver *drv = inst->drv;
 	u32 reg;
 	u32 reg1, reg2;
