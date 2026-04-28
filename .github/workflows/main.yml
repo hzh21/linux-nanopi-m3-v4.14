@@ -147,6 +147,8 @@ jobs:
           # --- 开启 VETH (解决无法端口映射的问题) ---
           ./scripts/config --enable CONFIG_VETH
           ./scripts/config --enable CONFIG_BRIDGE
+          ./scripts/config --enable CONFIG_CPU_FREQ_GOV_SCHEDUTIL
+          ./scripts/config --set-val CONFIG_CPU_FREQ_DEFAULT_GOV_SCHEDUTIL y
           
           make olddefconfig
           
