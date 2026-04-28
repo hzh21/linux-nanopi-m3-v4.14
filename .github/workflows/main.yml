@@ -41,6 +41,7 @@ jobs:
           make king6818_defconfig
           
           # 3. 深度网络与内核性能调优
+          ./scripts/config --enable CONFIG_TCP_CONG_ADVANCED
           ./scripts/config --set-str CONFIG_LOCALVERSION "-s5p6818"
           ./scripts/config --disable CONFIG_LOCALVERSION_AUTO
           ./scripts/config --enable CONFIG_NET_SCH_FQ
@@ -130,6 +131,22 @@ jobs:
           
           # 对于 4.14 跑 Docker，通常还需要开启这个（MEMCG 的子项）
           ./scripts/config --enable CONFIG_MEMCG_SWAP
+          # --- 开启容器必须的命名空间 ---
+          ./scripts/config --enable CONFIG_USER_NS
+          ./scripts/config --enable CONFIG_NET_NS
+          ./scripts/config --enable CONFIG_PID_NS
+          ./scripts/config --enable CONFIG_IPC_NS
+          ./scripts/config --enable CONFIG_UTS_NS
+          
+          # --- 开启 Cgroup 关键控制器 (修复 Podman 报错) ---
+          ./scripts/config --enable CONFIG_CGROUP_DEVICE
+          ./scripts/config --enable CONFIG_CGROUP_PIDS
+          ./scripts/config --enable CONFIG_MEMCG
+          ./scripts/config --enable CONFIG_MEMCG_SWAP
+          
+          # --- 开启 VETH (解决无法端口映射的问题) ---
+          ./scripts/config --enable CONFIG_VETH
+          ./scripts/config --enable CONFIG_BRIDGE
           
           make olddefconfig
           
