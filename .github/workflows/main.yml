@@ -46,7 +46,14 @@ jobs:
           ./scripts/config --enable CONFIG_NET_SCH_FQ
           ./scripts/config --enable CONFIG_NET_SCH_FQ_CODEL
           ./scripts/config --enable CONFIG_TCP_CONG_BBR
-          ./scripts/config --set-val CONFIG_DEFAULT_TCP_CONG "bbr"
+          
+          # 关键：手动开启默认算法的 boolean 开关，而不仅仅是设个字符串
+          ./scripts/config --enable CONFIG_DEFAULT_BBR
+          ./scripts/config --set-str CONFIG_DEFAULT_TCP_CONG "bbr"
+          
+          # 补充 4.14 可能需要的依赖
+          ./scripts/config --enable CONFIG_NET_INGRESS
+          ./scripts/config --enable CONFIG_NET_EGRESS
           ./scripts/config --set-val CONFIG_HZ 1000
           ./scripts/config --enable CONFIG_HZ_1000
           ./scripts/config --enable CONFIG_HIGH_RES_TIMERS
