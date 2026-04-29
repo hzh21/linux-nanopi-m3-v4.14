@@ -161,6 +161,16 @@ jobs:
           ./scripts/config --enable CONFIG_IP_NF_FILTER
           ./scripts/config --enable CONFIG_NETFILTER_XT_MATCH_COMMENT
           ./scripts/config --enable CONFIG_BRIDGE_NETFILTER
+          ./scripts/config --enable CONFIG_NETFILTER_XT_MATCH_MULTIPORT
+
+          # --- 预防：这些是 Podman/Docker 端口映射经常调用的模块 ---
+          ./scripts/config --enable CONFIG_NETFILTER_XT_MATCH_ADDRTYPE
+          ./scripts/config --enable CONFIG_NETFILTER_XT_MATCH_IPRANGE
+          ./scripts/config --enable CONFIG_NETFILTER_XT_MATCH_LIMIT
+          ./scripts/config --enable CONFIG_NETFILTER_XT_MATCH_HASHLIMIT
+          
+          # --- 预防：透明代理和重定向常用的模块 ---
+          ./scripts/config --enable CONFIG_NETFILTER_XT_TARGET_REDIRECT
           
           make olddefconfig
           
