@@ -149,6 +149,8 @@ jobs:
           ./scripts/config --enable CONFIG_BRIDGE
           ./scripts/config --enable CONFIG_CPU_FREQ_GOV_SCHEDUTIL
           ./scripts/config --set-val CONFIG_CPU_FREQ_DEFAULT_GOV_SCHEDUTIL y
+          ./scripts/config --enable CONFIG_CPU_FREQ_STAT
+          ./scripts/config --enable CONFIG_CPU_FREQ_TIMES
           # --- 核心 Netfilter NAT 模块 (修复 MASQUERADE 报错) ---
           ./scripts/config --enable CONFIG_NF_NAT
           ./scripts/config --enable CONFIG_IP_NF_NAT
